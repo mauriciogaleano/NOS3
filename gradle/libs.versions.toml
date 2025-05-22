@@ -1,0 +1,97 @@
+[versions]
+# Version for the Android Gradle Plugin
+# Find the latest version here: https://developer.android.com/build/releases/gradle-plugin
+agp = "8.9.2" # Replace with the desired AGP version
+
+# Version for the Kotlin Gradle Plugin
+# Find the latest version here: https://github.com/JetBrains/Kotlin/releases
+kotlin = "1.9.0"  # Downgraded to be compatible with Compose
+
+# Version for the Jetpack Compose Compiler Extension
+# Check the compatibility map for the correct version for your Kotlin version:
+# https://developer.android.com/jetpack/androidx/releases/compose-kotlin
+composeCompiler = "1.5.3"  # Updated to match Kotlin 1.9.0
+
+# You can add versions for other libraries here as needed
+# For example:
+core-ktx = "1.12.0"
+junit = "4.13.2"
+androidx-test-ext-junit = "1.1.5"
+espresso-core = "3.5.1"
+lifecycle-runtime-ktx = "2.6.2"
+activity-compose = "1.8.1"
+bom = "2023.08.00" # Jetpack Compose Bill of Materials
+
+camerax = "1.4.2"  # Add this new version for CameraX
+health-connect = "1.1.0-rc01"  # Add this for health connect
+
+compose-ui-test = "1.5.4"  # Add this for Compose UI testing
+
+material3 = "1.2.0"  # Add this line for Material3
+
+[libraries]
+# Define library dependencies here using version references
+# Example libraries (uncomment and add versions in [versions] if needed):
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
+espresso-core = { group = "androidx.compose.ui", name = "ui-test-espresso", version.ref = "espresso-core" } # Note: Espresso for Compose UI testing
+
+# Jetpack Compose libraries (using BOM for version management)
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "bom" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-ktx" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
+
+# CameraX libraries
+androidx-camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "camerax" }
+androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
+androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
+androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
+androidx-camera-extensions = { group = "androidx.camera", name = "camera-extensions", version.ref = "camerax" }
+
+# Health Connect
+androidx-health-connect = { group = "androidx.health.connect", name = "connect-client", version.ref = "health-connect" }
+
+# Testing dependencies
+androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "compose-ui-test" }
+androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "compose-ui-test" }
+
+[bundles]
+# You can define bundles of libraries here
+# Example bundle (uncomment if using the example Compose libraries):
+compose-ui = [
+    "androidx-compose-ui",
+    "androidx-compose-ui-graphics",
+    "androidx-compose-ui-tooling",
+    "androidx-compose-ui-tooling-preview",
+    "androidx-compose-material3"
+]
+
+camerax = [
+    "androidx-camera-core",
+    "androidx-camera-camera2",
+    "androidx-camera-lifecycle",
+    "androidx-camera-view",
+    "androidx-camera-extensions"
+]
+
+[plugins]
+# Define Gradle plugins here
+# Define the Android Application plugin
+android-application = { id = "com.android.application", version.ref = "agp" }
+
+# Define the Kotlin Android plugin
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+
+# Define the Kotlin Compose plugin (its version is usually the same as the Kotlin version)
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" } # **Reference the kotlin version here**
+
+# You can add other plugins here as needed
+# Example:
+# android-library = { id = "com.android.library", version.ref = "agp" }
+# kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
