@@ -1,10 +1,13 @@
 import Debug "mo:base/Debug";
 import Principal "mo:base/Principal";
 import Text "mo:base/Text";
+import Array "mo:base/Array";
+import Time "mo:base/Time";
+import Int "mo:base/Int";
 
 actor {
   type HrvEntry = {
-    timestamp: Nat64;
+    timestamp: Int;
     rmssd: Nat;
     surroundings: Nat;
     self: Nat;
@@ -13,17 +16,17 @@ actor {
     technology: Nat;
     stress: Text;
   };
-
+  
   type User = {
     principal: Principal;
     group: Text;
     points: Nat;
     hrv: [HrvEntry];
   };
-
-  stable var users: [User] = [];
-  stable var owner: Principal = Principal.fromText("2vxsx-fae");
-
+  
+  private stable var users: [User] = [];
+  private stable var owner: Principal = Principal.fromText("2vxsx-fae");
+  
   public shared(msg) func register(group: Text): async Bool {
     let caller = msg.caller;
     for (user in users.vals()) {
@@ -40,8 +43,8 @@ actor {
     Debug.print("Nuevo usuario: " # Principal.toText(caller));
     return true;
   };
-
-  func calculateStressScore(rmssd: Nat): Text {
+  
+  private func calculateStressScore(rmssd: Nat): Text {
     if (rmssd > 50) {
       return "Low Stress";
     } else if (rmssd >= 30 and rmssd <= 50) {
@@ -50,7 +53,7 @@ actor {
       return "High Stress";
     };
   };
-
+  
   public shared(msg) func addHrv(
     rmssd: Nat,
     surroundings: Nat,
@@ -61,14 +64,13 @@ actor {
   ): async Bool {
     let principal = msg.caller;
     var index: ?Nat = null;
-
+    
     for (i in users.keys()) {
       if (users[i].principal == principal) {
         index := ?i;
-        break;
       };
     };
-
+    
     switch (index) {
       case null {
         Debug.print("Usuario no registrado: " # Principal.toText(principal));
@@ -81,7 +83,7 @@ actor {
           let last = users[i].hrv[users[i].hrv.size() - 1];
           prev := ?last.stress;
         };
-
+        
         var earned: Nat = 0;
         switch (prev) {
           case (?prevLevel) {
@@ -93,27 +95,33 @@ actor {
           };
           case null {};
         };
-
-        users[i].points += earned;
-        Debug.print("Puntos ganados: " # debug_show(earned));
-
-        let newEntry: HrvEntry = {
-          timestamp = ic.time();
-          rmssd = rmssd;
-          surroundings = surroundings;
-          self = self;
-          interaction = interaction;
-          place = place;
-          technology = technology;
-          stress = level
+        
+        let newUser = {
+          principal = users[i].principal;
+          group = users[i].group;
+          points = users[i].points + earned;
+          hrv = Array.append(users[i].hrv, [{
+            timestamp = Time.now();
+            rmssd = rmssd;
+            surroundings = surroundings;
+            self = self;
+            interaction = interaction;
+            place = place;
+            technology = technology;
+            stress = level
+          }]);
         };
-
-        users[i].hrv := Array.append(users[i].hrv, [newEntry]);
+        
+        users := Array.tabulate<User>(users.size(), func(j) {
+          if (j == i) { newUser } else { users[j] }
+        });
+        
+        Debug.print("Puntos ganados: " # debug_show(earned));
         return true;
       };
     };
   };
-
+  
   public shared query(msg) func getUser(): async ?User {
     let caller = msg.caller;
     for (user in users.vals()) {
@@ -123,7 +131,7 @@ actor {
     };
     return null;
   };
-
+  
   public shared query(msg) func getPoints(): async ?Nat {
     let caller = msg.caller;
     for (user in users.vals()) {
@@ -133,7 +141,7 @@ actor {
     };
     return null;
   };
-
+  
   public query func feedback(level: Text): async Text {
     switch (level) {
       case "Low Stress" {
@@ -150,13 +158,12 @@ actor {
       };
     };
   };
-
+  
   public query func getOwner(): async Principal {
     return owner;
   };
-
+  
   public shared(msg) func isOwner(): async Bool {
     return msg.caller == owner;
   };
 }
-

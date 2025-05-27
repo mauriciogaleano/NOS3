@@ -1,0 +1,23 @@
+// Version: 1.0.0
+type HrvEntry__32726226 =
+  {
+    interaction : Nat;
+    place : Nat;
+    rmssd : Nat;
+    self : Nat;
+    stress : Text;
+    surroundings : Nat;
+    technology : Nat;
+    timestamp : Int
+  };
+type User__595491174 =
+  {
+    group : Text;
+    hrv : [HrvEntry__32726226];
+    points : Nat;
+    principal : Principal
+  };
+actor {
+  stable var owner : Principal;
+  stable var users : [User__595491174]
+};

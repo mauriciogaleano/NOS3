@@ -1,0 +1,28 @@
+type User = 
+ record {
+   group: text;
+   hrv: vec HrvEntry;
+   points: nat;
+   "principal": principal;
+ };
+type HrvEntry = 
+ record {
+   interaction: nat;
+   place: nat;
+   rmssd: nat;
+   self: nat;
+   stress: text;
+   surroundings: nat;
+   technology: nat;
+   timestamp: int;
+ };
+service : {
+  addHrv: (rmssd: nat, surroundings: nat, self: nat, interaction: nat, place:
+   nat, technology: nat) -> (bool);
+  feedback: (level: text) -> (text) query;
+  getOwner: () -> (principal) query;
+  getPoints: () -> (opt nat) query;
+  getUser: () -> (opt User) query;
+  isOwner: () -> (bool);
+  register: (group: text) -> (bool);
+}
